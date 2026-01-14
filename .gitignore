@@ -3,4 +3,5 @@
 *.iml
 *.class
 *Test.java
+nginx-1.20.2
 **/test/
