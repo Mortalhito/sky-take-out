@@ -31,6 +31,9 @@ public class AutoFillAspect {
      */
     @Before("autoFillPointcut()")
     public void autoFill(JoinPoint joinPoint) throws Exception {
+        log.info("开始进行数据填充");
+
+
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         AutoFill autoFill = signature.getMethod().getAnnotation(AutoFill.class);
         OperationType value = autoFill.value();
