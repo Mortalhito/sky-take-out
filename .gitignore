@@ -2,7 +2,8 @@
 .idea
 *.iml
 *.class
-.yml
+application.yml
+application-dev.yml
 *Test.java
 nginx-1.20.2
 **/test/
