@@ -33,5 +33,6 @@ public interface CategoryMapper {
 
     @AutoFill(value = OperationType.UPDATE)
     void update(Category category);
+
     List<Category> list(Integer type);
 }
