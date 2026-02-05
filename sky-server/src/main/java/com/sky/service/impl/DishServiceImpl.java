@@ -17,12 +17,14 @@ import com.sky.service.DishService;
 import com.sky.vo.DishVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class DishServiceImpl implements DishService {
@@ -35,6 +37,8 @@ public class DishServiceImpl implements DishService {
     @Autowired
     private SetmealDishMapper setmealDishMapper;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public void startOrStop(Integer status, Long id) {
@@ -78,7 +82,7 @@ public class DishServiceImpl implements DishService {
             Dish dish = dishMapper.getById(id);
             if (dish == null)
                 throw new DeletionNotAllowedException("菜品不存在");
-            if (dish.getStatus() == StatusConstant.ENABLE) {
+            if (Objects.equals(dish.getStatus(), StatusConstant.ENABLE)) {
                 // 在售中，不能删除
                 throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
             }
@@ -106,6 +110,9 @@ public class DishServiceImpl implements DishService {
 
     @Override
     public DishVO getByIdWithFlavor(Long id) {
+
+
+
         // 根据 id 查询菜品数据
         Dish dish = dishMapper.getById(id);
         // 根据 id 查询口味数据
