@@ -11,17 +11,19 @@ import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController("userOrderController")
 @RequestMapping("/user/order")
 @Api("订单管理")
 @Slf4j
+@RequiredArgsConstructor
 public class OrderController {
-    @Autowired
-    OrderService orderService;
+
+    private final OrderService orderService;
 
     /**
      * 用户下单
@@ -37,8 +39,6 @@ public class OrderController {
     /**
      * 订单支付
      *
-     * @param ordersPaymentDTO
-     * @return
      */
     @PutMapping("/payment")
     @ApiOperation("订单支付")
@@ -65,21 +65,21 @@ public class OrderController {
 
     @PutMapping("/cancel/{id}")
     @ApiOperation("取消订单")
-    public Result cancel(@PathVariable Long id){
+    public Result<Void> cancel(@PathVariable Long id){
         orderService.cancelById(id);
         return Result.success();
     }
 
     @PostMapping("/repetition/{id}")
     @ApiOperation("再来一单")
-    public Result repetition(@PathVariable Long id){
+    public Result<Void> repetition(@PathVariable Long id){
         orderService.repetition(id);
         return Result.success();
     }
 
     @GetMapping("/reminder/{id}")
     @ApiOperation("用户催单")
-    public Result reminder(@PathVariable Long id){
+    public Result<Void> reminder(@PathVariable Long id){
         orderService.reminder(id);
         return Result.success();
     }

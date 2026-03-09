@@ -6,24 +6,24 @@ import com.sky.dto.UserLoginDTO;
 import com.sky.entity.User;
 import com.sky.exception.LoginFailedException;
 import com.sky.mapper.UserMapper;
-import com.sky.properties.JwtProperties;
 import com.sky.properties.WeChatProperties;
 import com.sky.service.UserService;
 import com.sky.utils.HttpClientUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    public static final String WX_LOGIN = "https://api.weixin.qq.com/sns/jscode2session";
+    private static final String WX_LOGIN = "https://api.weixin.qq.com/sns/jscode2session";
 
-    @Autowired
-    public WeChatProperties weChatProperties;
-    @Autowired
-    public UserMapper userMapper;
+    private final WeChatProperties weChatProperties;
+
+    private final UserMapper userMapper;
 
     @Override
     public User login(UserLoginDTO userLoginDTO) {
@@ -52,8 +52,7 @@ public class UserServiceImpl implements UserService {
         String json = HttpClientUtil.doGet(WX_LOGIN, params);
 
         JSONObject jsonObject = JSONObject.parseObject(json);
-        String openid = jsonObject.getString("openid");
 
-        return openid;
+        return jsonObject.getString("openid");
     }
 }

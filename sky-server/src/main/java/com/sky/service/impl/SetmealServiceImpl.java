@@ -12,26 +12,23 @@ import com.sky.result.PageResult;
 import com.sky.service.SetmealService;
 import com.sky.vo.DishItemVO;
 import com.sky.vo.SetmealVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class SetmealServiceImpl implements SetmealService {
-    @Autowired
-    private SetmealMapper setmealMapper;
-
-    @Autowired
-    private SetmealDishMapper setmealDishMapper;
+    private final SetmealMapper setmealMapper;
+    private final SetmealDishMapper setmealDishMapper;
 
     /**
      * 新增套餐，同时需要保存套餐和菜品的关联关系
-     * @param setmealDTO
      */
     @Override
     public void saveWithDish(SetmealDTO setmealDTO) {
@@ -51,8 +48,6 @@ public class SetmealServiceImpl implements SetmealService {
 
     /**
      * 根据id查询套餐和套餐菜品关系
-     * @param id
-     * @return SetmealVO
      */
     @Override
     public SetmealVO getById(Long id) {
@@ -104,23 +99,19 @@ public class SetmealServiceImpl implements SetmealService {
         setmealMapper.deleteByIds(ids);
     }
 
-    @Override
     /**
      * 条件查询
-     * @param setmeal
-     * @return
      */
+    @Override
     public List<Setmeal> list(Setmeal setmeal) {
-        List<Setmeal> list = setmealMapper.list(setmeal);
-        return list;
+        return setmealMapper.list(setmeal);
     }
 
-    @Override
+
     /**
      * 根据id查询菜品选项
-     * @param id
-     * @return
      */
+    @Override
     public List<DishItemVO> getDishItemById(Long id) {
         return setmealMapper.getDishItemBySetmealId(id);
     }

@@ -5,34 +5,28 @@ import com.sky.context.BaseContext;
 import com.sky.properties.JwtProperties;
 import com.sky.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Enumeration;
+
 
 /**
  * jwt 令牌校验的拦截器
  */
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class JwtTokenUserInterceptor implements HandlerInterceptor {
-
-    @Autowired
-    private JwtProperties jwtProperties;
+    private final JwtProperties jwtProperties;
 
     /**
      * 校验 jwt
-     *
-     * @param request
-     * @param response
-     * @param handler
-     * @return
-     * @throws Exception
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

@@ -13,8 +13,8 @@ import com.sky.utils.JwtUtil;
 import com.sky.vo.EmployeeLoginVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -27,18 +27,16 @@ import java.util.Map;
 @RequestMapping("/admin/employee")
 @Slf4j
 @Api(tags = "员工相关接口")
+@RequiredArgsConstructor
 public class EmployeeController {
 
-    @Autowired
-    private EmployeeService employeeService;
-    @Autowired
-    private JwtProperties jwtProperties;
+    private final EmployeeService employeeService;
+
+    private final JwtProperties jwtProperties;
 
     /**
      * 登录
      *
-     * @param employeeLoginDTO
-     * @return
      */
     @PostMapping("/login")
     @ApiOperation("员工登录")
@@ -67,8 +65,6 @@ public class EmployeeController {
 
     /**
      * 退出
-     *
-     * @return
      */
     @ApiOperation("员工退出")
     @PostMapping("/logout")
@@ -79,7 +75,7 @@ public class EmployeeController {
 
     @PostMapping
     @ApiOperation("新增员工")
-    public Result register(@RequestBody EmployeeDTO employeeDTO) {
+    public Result<Void> register(@RequestBody EmployeeDTO employeeDTO) {
         log.info("新增员工{}", employeeDTO);
         employeeService.save(employeeDTO);
         return Result.success();
@@ -87,7 +83,7 @@ public class EmployeeController {
 
     @GetMapping("/page")
     @ApiOperation("员工分页查询")
-    public Result<PageResult> page(EmployeePageQueryDTO  employeePageQueryDTO) {
+    public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO) {
         log.info("员工分页查询：{}", employeePageQueryDTO);
         PageResult pageResult = employeeService.pageQuery(employeePageQueryDTO);
 
@@ -96,7 +92,7 @@ public class EmployeeController {
 
     @PostMapping("/status/{status}")
     @ApiOperation("启动、禁用员工账号")
-    public Result startOrStop(@PathVariable Integer status, Long id){
+    public Result<Void> startOrStop(@PathVariable Integer status, Long id) {
         log.info("启用、禁用员工账号：{}，{}", status, id);
         employeeService.startOrStop(status, id);
         return Result.success();
@@ -104,13 +100,13 @@ public class EmployeeController {
 
     @GetMapping("/{id}")
     @ApiOperation("根据 id 查询员工信息")
-    public Result<Employee> getById(@PathVariable Integer id){
+    public Result<Employee> getById(@PathVariable Integer id) {
         return Result.success(employeeService.getById(id));
     }
 
     @PutMapping
     @ApiOperation("编辑员工信息")
-    public Result update(@RequestBody EmployeeDTO employeeDTO){
+    public Result<Void> update(@RequestBody EmployeeDTO employeeDTO) {
         log.info("编辑员工信息：{}", employeeDTO);
         employeeService.update(employeeDTO);
 

@@ -6,9 +6,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.sky.properties.WeChatProperties;
 import com.sky.service.OrderService;
 import com.wechat.pay.contrib.apache.httpclient.util.AesUtil;
+import io.swagger.annotations.Api;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
@@ -23,16 +25,17 @@ import java.util.HashMap;
 @RestController
 @RequestMapping("/notify")
 @Slf4j
+@Api(tags = "微信支付回调通知接口")
+@RequiredArgsConstructor
 public class PayNotifyController {
-    @Autowired
-    private OrderService orderService;
-    @Autowired
-    private WeChatProperties weChatProperties;
+
+    private final OrderService orderService;
+
+    private final WeChatProperties weChatProperties;
 
     /**
      * 支付成功回调
      *
-     * @param request
      */
     @RequestMapping("/paySuccess")
     public void paySuccessNotify(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -61,16 +64,13 @@ public class PayNotifyController {
     /**
      * 读取数据
      *
-     * @param request
-     * @return
-     * @throws Exception
      */
     private String readData(HttpServletRequest request) throws Exception {
         BufferedReader reader = request.getReader();
         StringBuilder result = new StringBuilder();
-        String line = null;
+        String line;
         while ((line = reader.readLine()) != null) {
-            if (result.length() > 0) {
+            if (!result.isEmpty()) {
                 result.append("\n");
             }
             result.append(line);
@@ -81,9 +81,6 @@ public class PayNotifyController {
     /**
      * 数据解密
      *
-     * @param body
-     * @return
-     * @throws Exception
      */
     private String decryptData(String body) throws Exception {
         JSONObject resultObject = JSON.parseObject(body);
@@ -93,17 +90,15 @@ public class PayNotifyController {
         String associatedData = resource.getString("associated_data");
 
         AesUtil aesUtil = new AesUtil(weChatProperties.getApiV3Key().getBytes(StandardCharsets.UTF_8));
+
         //密文解密
-        String plainText = aesUtil.decryptToString(associatedData.getBytes(StandardCharsets.UTF_8),
+        return aesUtil.decryptToString(associatedData.getBytes(StandardCharsets.UTF_8),
                 nonce.getBytes(StandardCharsets.UTF_8),
                 ciphertext);
-
-        return plainText;
     }
 
     /**
      * 给微信响应
-     * @param response
      */
     private void responseToWeixin(HttpServletResponse response) throws Exception{
         response.setStatus(200);

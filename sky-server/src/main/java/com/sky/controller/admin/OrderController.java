@@ -11,8 +11,8 @@ import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/order")
 @Api(tags = "管理端订单接口")
 @Slf4j
+@RequiredArgsConstructor
 public class OrderController {
-    @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
 
     @GetMapping("/conditionSearch")
     @ApiOperation("订单搜索")
@@ -40,7 +40,7 @@ public class OrderController {
 
     @PutMapping("/confirm")
     @ApiOperation("确认订单")
-    public Result confirm(@RequestBody OrdersConfirmDTO ordersConfirmDTO) {
+    public Result<Void> confirm(@RequestBody OrdersConfirmDTO ordersConfirmDTO) {
         log.info("确认订单：{}", ordersConfirmDTO);
         orderService.confirm(ordersConfirmDTO);
         return Result.success();
@@ -48,7 +48,7 @@ public class OrderController {
 
     @PutMapping("/rejection")
     @ApiOperation("拒绝订单")
-    public Result rejection(@RequestBody OrdersRejectionDTO ordersRejectionDTO) throws Exception {
+    public Result<Void> rejection(@RequestBody OrdersRejectionDTO ordersRejectionDTO) {
         log.info("拒绝订单：{}", ordersRejectionDTO);
         orderService.rejection(ordersRejectionDTO);
 
@@ -57,7 +57,7 @@ public class OrderController {
 
     @PutMapping("/cancel")
     @ApiOperation("取消订单")
-    public Result cancel(@RequestBody OrdersCancelDTO ordersCancelDTO) throws Exception {
+    public Result<Void> cancel(@RequestBody OrdersCancelDTO ordersCancelDTO) {
         log.info("取消订单：{}", ordersCancelDTO);
         orderService.cancel(ordersCancelDTO);
         return Result.success();
@@ -71,14 +71,14 @@ public class OrderController {
 
     @PutMapping("/delivery/{id}")
     @ApiOperation("派送订单")
-    public Result delivery(@PathVariable Long id) {
+    public Result<Void> delivery(@PathVariable Long id) {
         orderService.delivery(id);
         return Result.success();
     }
 
     @PutMapping("/complete/{id}")
     @ApiOperation("完成订单")
-    public Result complete(@PathVariable Long id) {
+    public Result<Void> complete(@PathVariable Long id) {
         orderService.complete(id);
         return Result.success();
     }

@@ -12,44 +12,31 @@ import com.sky.exception.OrderBusinessException;
 import com.sky.mapper.*;
 import com.sky.result.PageResult;
 import com.sky.service.OrderService;
-import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 import com.sky.websocket.WebSocketServer;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
-    private WeChatPayUtil weChatPayUtil;
+    private final UserMapper userMapper;
+    private final OrderMapper orderMapper;
+    private final OrderDetailMapper orderDetailMapper;
+    private final ShoppingCartMapper shoppingCartMapper;
+    private final AddressBookMapper addressBookMapper;
 
-    @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private OrderMapper orderMapper;
-
-    @Autowired
-    private OrderDetailMapper orderDetailMapper;
-
-    @Autowired
-    private ShoppingCartMapper shoppingCartMapper;
-
-    @Autowired
-    private AddressBookMapper addressBookMapper;
-
-    @Autowired
-    private WebSocketServer webSocketServer;
+    private final WebSocketServer webSocketServer;
 
     @Transactional
     @Override
@@ -105,8 +92,6 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 订单支付
      *
-     * @param ordersPaymentDTO
-     * @return
      */
     public OrderPaymentVO payment(OrdersPaymentDTO ordersPaymentDTO) throws Exception {
         // 当前登录用户id
@@ -138,7 +123,6 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 支付成功，修改订单状态
      *
-     * @param outTradeNo
      */
     public void paySuccess(String outTradeNo) {
 
@@ -280,18 +264,15 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 根据订单id获取菜品信息字符串
      *
-     * @param orders
-     * @return
      */
     private String getOrderDishesStr(Orders orders) {
         // 查询订单菜品详情信息（订单中的菜品和数量）
         List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(orders.getId());
 
         // 将每一条订单菜品信息拼接为字符串（格式：宫保鸡丁*3；）
-        List<String> orderDishList = orderDetailList.stream().map(x -> {
-            String orderDish = x.getName() + "*" + x.getNumber() + ";";
-            return orderDish;
-        }).collect(Collectors.toList());
+        List<String> orderDishList = orderDetailList.stream()
+                .map(x -> x.getName() + "*" + x.getNumber() + ";")
+                .collect(Collectors.toList());
 
         // 将该订单对应的所有菜品信息拼接在一起
         return String.join("", orderDishList);
@@ -340,7 +321,7 @@ public class OrderServiceImpl implements OrderService {
         // 管理端取消订单需要退款，根据订单id更新订单状态、取消原因、取消时间
         Orders orders = orderMapper.getById(ordersCancelDTO.getId());
 
-        if(orders.getStatus() > 2){
+        if (orders.getStatus() > 2) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
 

@@ -9,22 +9,20 @@ import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.mapper.ShoppingCartMapper;
 import com.sky.service.ShoppingCartService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
+
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ShoppingCartServiceImpl implements ShoppingCartService {
-    @Autowired
-    private ShoppingCartMapper shoppingCartMapper;
-    @Autowired
-    private DishMapper dishMapper;
-    @Autowired
-    private SetmealMapper setmealMapper;
+    private final ShoppingCartMapper shoppingCartMapper;
+    private final DishMapper dishMapper;
+    private final SetmealMapper setmealMapper;
 
     @Override
     public void add(ShoppingCartDTO shoppingCartDTO) {
